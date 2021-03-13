@@ -17,6 +17,8 @@ const chatRouter = require('./src/routes/chat')
 
 app.use('/chat', chatRouter)
 app.use('/auth', require('./src/routes/auth'))
+app.use('/user', require('./src/routes/user'))
+
 
 app.get('/', (req, res)=> {
   res.send({
