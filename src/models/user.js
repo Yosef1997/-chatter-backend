@@ -42,3 +42,47 @@ exports.updateUser = (id, data) => {
     console.log(query.sql)
   })
 }
+
+exports.getAllUserByCondition = (id, cond) => {
+  return new Promise((resolve, reject) => {
+    const query = db.query(`
+    SELECT id, name, status, picture 
+    FROM users
+    WHERE name LIKE "%${cond.search}%" AND id NOT IN (${id})
+    ORDER BY ${cond.sort} ${cond.order}
+    LIMIT ${cond.limit} OFFSET ${cond.offset}
+    `, (err, res, field) => {
+      if (err) reject(err)
+      resolve(res)
+    })
+    console.log(query.sql)
+  })
+}
+
+exports.getCountUserByCondition = (id, cond) => {
+  return new Promise((resolve, reject) => {
+    const query = db.query(`
+    SELECT COUNT(id) as totalData 
+    FROM users 
+    WHERE name LIKE "%${cond.search}%"  AND id NOT IN (${id})
+    `, (err, res, field) => {
+      if (err) reject(err)
+      resolve(res)
+    })
+    console.log(query.sql)
+  })
+}
+
+exports.getCountUser = (id) => {
+  return new Promise((resolve, reject) => {
+    const query = db.query(`
+    SELECT COUNT(id) as totalData 
+    FROM users 
+    WHERE id NOT IN (${id})
+    `, (err, res, field) => {
+      if (err) reject(err)
+      resolve(res)
+    })
+    console.log(query.sql)
+  })
+}

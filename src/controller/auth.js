@@ -34,7 +34,7 @@ exports.login = async (req, res)=> {
       const compare = bcrypt.compareSync(password, existingUser[0].password)
       if (compare) {
         const {id, name, email, password, phone, userID, status, picture } = existingUser[0]
-        const token = jwt.sign({ id, name, email, password, phone, userID, status, picture }, APP_KEY)
+        const token = jwt.sign({id}, APP_KEY)
         const results = {
           token: token
         }

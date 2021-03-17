@@ -13,9 +13,7 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.use(cors('*rs'))
 app.use(morgan('dev'))
 
-const chatRouter = require('./src/routes/chat')
-
-app.use('/chat', chatRouter)
+app.use('/chat', require('./src/routes/chat'))
 app.use('/auth', require('./src/routes/auth'))
 app.use('/user', require('./src/routes/user'))
 
