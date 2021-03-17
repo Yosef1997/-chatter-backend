@@ -20,10 +20,12 @@ exports.createChat = async (req, res) => {
 
 exports.listChat = async (req, res) => {
   try{
-    const {id} = req.userData
-    const results = await chatModel.getAllChat(id)
-    if (results.length > 0){
-      return response(res, 200, true, results)
+    const {id} = req.params
+    const initialResults = await chatModel.getAllChat(id)
+    if (initialResults.length > 0){
+      const results = initialResults.map(object=>object.name)
+      const finalResults = Array.from(new Set(results))
+      return response(res, 200, true,'All chat', finalResults)
     }else {
       return response(res, 400, false, 'Data chat not found')
     }
@@ -36,7 +38,7 @@ exports.listChat = async (req, res) => {
 exports.detailChat = async (req, res) => {
   try{
     const sender = req.userData.id
-    const receiver = req.params.id
+    const {receiver} = req.query
     const results = await chatModel.detailChat(receiver, sender)
     if (results.length > 0) {
       return response(res, 200, true, results[0])

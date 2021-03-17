@@ -31,7 +31,9 @@ exports.deleteChat = (receiver, message, sender) => {
 exports.getAllChat = (id) => {
   return new Promise((resolve, reject) => {
     const query = db.query(`
-    SELECT * from message WHERE sender=${id}
+    SELECT m.id, u.name, u.picture, m.message from message m
+    INNER JOIN users u ON u.id=receiver
+    WHERE sender=${id}
     `, (err, res, field) => {
       if (err) reject(err)
       resolve(res)

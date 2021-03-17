@@ -10,8 +10,10 @@ const { APP_PORT } = process.env
 const app= express()
 
 app.use(bodyParser.urlencoded({extended: false}))
-app.use(cors('*rs'))
+app.use(cors('*'))
 app.use(morgan('dev'))
+
+app.use('/upload/profile', express.static('./upload/profile'))
 
 app.use('/chat', require('./src/routes/chat'))
 app.use('/auth', require('./src/routes/auth'))
