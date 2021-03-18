@@ -1,6 +1,7 @@
 const userModel = require('../models/user')
 const response = require('../helpers/response')
 const bcrypt = require('bcrypt')
+const fs = require('fs')
 
 exports.getDetailUser = async (req, res) => {
   try {

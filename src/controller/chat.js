@@ -38,10 +38,10 @@ exports.listChat = async (req, res) => {
 exports.detailChat = async (req, res) => {
   try{
     const sender = req.userData.id
-    const {receiver} = req.query
+    const {receiver} = req.params
     const results = await chatModel.detailChat(receiver, sender)
     if (results.length > 0) {
-      return response(res, 200, true, results[0])
+      return response(res, 200, true, results)
     }else {
       return response(res, 400, false, 'Detail chat not found')
     }
