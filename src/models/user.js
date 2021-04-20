@@ -1,17 +1,5 @@
 const db = require('../helpers/db')
 
-exports.getUsersByCondition = (cond) => {
-  return new Promise((resolve, reject) => {
-    const query = db.query(`
-    SELECT * FROM users WHERE ${Object.keys(cond).map(item => `${item}="${cond[item]}"`).join(' AND ')}
-  `, (err, res, field) => {
-      if (err) reject(err)
-      resolve(res)
-    })
-    console.log(query.sql)
-  })
-}
-
 exports.createUser = (data) => {
   return new Promise((resolve, reject) => {
     const query = db.query(`
@@ -36,6 +24,32 @@ exports.updateUser = (id, data) => {
       SET ${key.map((item, index) => `${item}="${value[index]}"`)}
       WHERE id=${id}
     `, (err, res, field) => {
+      if (err) reject(err)
+      resolve(res)
+    })
+    console.log(query.sql)
+  })
+}
+
+exports.deletePicture = (id) => {
+  return new Promise((resolve, reject) => {
+    const query = db.query(`
+      UPDATE user
+      SET picture=NULL
+      WHERE id=${id}
+    `, (err, res, field) => {
+      if (err) reject(err)
+      resolve(res)
+    })
+    console.log(query.sql)
+  })
+}
+
+exports.getUsersByCondition = (cond) => {
+  return new Promise((resolve, reject) => {
+    const query = db.query(`
+    SELECT * FROM users WHERE ${Object.keys(cond).map(item => `${item}="${cond[item]}"`).join(' AND ')}
+  `, (err, res, field) => {
       if (err) reject(err)
       resolve(res)
     })

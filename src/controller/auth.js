@@ -6,19 +6,17 @@ const { APP_KEY, APP_URL } = process.env
 
 exports.signUp = async (req, res) => {
   try{
-    const {name, email, password} = req.body
-    const isExist = await userModel.getUsersByCondition({email})
+    const {phone} = req.body
+    const isExist = await userModel.getUsersByCondition({phone})
     if (isExist.length < 1) {
-      const salt = await bcrypt.genSalt()
-      const encryptedPassword = await bcrypt.hash(password, salt)
-      const createUser = await userModel.createUser({name, email, password:encryptedPassword})
+      const createUser = await userModel.createUser({phone})
       if (createUser.insertId > 0) {
         return response(res, 200, true, 'Register Success')
       } else {
         return response(res, 400, false, 'Register Failed')
       }
     }else {
-      return response(res, 400, false, 'Email already used')
+      return response(res, 400, false, 'Phone number already used')
     }
   }catch (error){
     return response(res, 400, false, 'Bad Request')

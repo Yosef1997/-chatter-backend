@@ -17,6 +17,49 @@ exports.getDetailUser = async (req, res) => {
   }
 }
 
+exports.getAllUser = async (req, res) => {
+  try{
+    const {id} = req.userData
+    const cond = req.query
+    cond.search = cond.search || ''
+    cond.page = Number(cond.page) || 1
+    cond.limit = Number(cond.limit) || 4
+    cond.offset = (cond.page - 1) * cond.limit
+    cond.sort = cond.sort || 'name'
+    cond.order = cond.order || 'ASC'
+
+    let totalPage
+    let totalData
+    
+    if (cond.search) {
+      totalData = await userModel.getCountUserByCondition(id, cond)
+      totalPage = Math.ceil(Number(totalData[0].totalData) / cond.limit)
+    } else {
+      totalData = await userModel.getCountUser(id)
+      totalPage = Math.ceil(Number(totalData[0].totalData) / cond.limit)
+    }
+
+    const results = await userModel.getAllUserByCondition(id, cond)
+    return response(
+      res,
+      200,
+      true,
+      'List of all User',
+      results,
+      {
+        totalData: totalData[0].totalData,
+        currentPage: cond.page,
+        totalPage,
+        nextLink: cond.page < totalPage ? `${APP_URL}contact?${qs.stringify({ ...req.query, ...{ page: cond.page + 1 } })}` : null,
+        prevLink: cond.page > 1 ? `${APP_URL}contact?${qs.stringify({ ...req.query, ...{ page: cond.page - 1 } })}` : null
+      }
+    )
+  }catch(error){
+    console.log(error)
+    return response(res, 400, false, 'Bad Request')
+  }
+}
+
 exports.UpdateUser = async (req, res) => {
   try {
     const { id } = req.params
@@ -35,10 +78,6 @@ exports.UpdateUser = async (req, res) => {
       return response(res, 404, false, 'User Not Found')
     }
 
-    // if (initialResults[0].pin === null) {
-    //   return response(res, 404, false, 'Your account does not have a PIN, please create PIN first')
-    // }
-    
     // name
     if (name) {
       if (name === initialResults[0].name) {
@@ -129,49 +168,6 @@ exports.UpdateUser = async (req, res) => {
     return response(res, 400, false, 'Cant Update personal Information')
   } catch (err) {
     console.log(err)
-    return response(res, 400, false, 'Bad Request')
-  }
-}
-
-exports.getAllUser = async (req, res) => {
-  try{
-    const {id} = req.userData
-    const cond = req.query
-    cond.search = cond.search || ''
-    cond.page = Number(cond.page) || 1
-    cond.limit = Number(cond.limit) || 4
-    cond.offset = (cond.page - 1) * cond.limit
-    cond.sort = cond.sort || 'name'
-    cond.order = cond.order || 'ASC'
-
-    let totalPage
-    let totalData
-    
-    if (cond.search) {
-      totalData = await userModel.getCountUserByCondition(id, cond)
-      totalPage = Math.ceil(Number(totalData[0].totalData) / cond.limit)
-    } else {
-      totalData = await userModel.getCountUser(id)
-      totalPage = Math.ceil(Number(totalData[0].totalData) / cond.limit)
-    }
-
-    const results = await userModel.getAllUserByCondition(id, cond)
-    return response(
-      res,
-      200,
-      true,
-      'List of all User',
-      results,
-      {
-        totalData: totalData[0].totalData,
-        currentPage: cond.page,
-        totalPage,
-        nextLink: cond.page < totalPage ? `${APP_URL}contact?${qs.stringify({ ...req.query, ...{ page: cond.page + 1 } })}` : null,
-        prevLink: cond.page > 1 ? `${APP_URL}contact?${qs.stringify({ ...req.query, ...{ page: cond.page - 1 } })}` : null
-      }
-    )
-  }catch(error){
-    console.log(error)
     return response(res, 400, false, 'Bad Request')
   }
 }
