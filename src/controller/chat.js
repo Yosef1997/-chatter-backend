@@ -23,7 +23,7 @@ exports.createChat = async (req, res) => {
 
 exports.listChat = async (req, res) => {
   try {
-    const { id } = req.params
+    const id = req.userData.id
     const initialResults = await chatModel.getAllChat(id)
     if (initialResults.length > 0) {
       const results = initialResults.map(object => object.name)
@@ -41,8 +41,8 @@ exports.listChat = async (req, res) => {
 exports.detailChat = async (req, res) => {
   try {
     const sender = req.userData.id
-    const { receiver } = req.params
-    const results = await chatModel.detailChat(receiver, sender)
+    const { id } = req.params
+    const results = await chatModel.detailChat(id, sender)
     if (results.length > 0) {
       return response(res, 200, true, results)
     } else {
@@ -56,8 +56,8 @@ exports.detailChat = async (req, res) => {
 
 exports.deleteChat = async (req, res) => {
   try {
-    const receiver = Number(req.body)
-    const message = String(req.query)
+    const { receiver } = req.body
+    const { message } = req.body
     const sender = req.userData.id
     const deleteChat = await chatModel.deleteChat(receiver, message, sender)
     console.log(deleteChat)

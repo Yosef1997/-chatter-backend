@@ -4,9 +4,8 @@ const authMiddleware = require('../middleware/auth')
 
 router.post('/', authMiddleware.authCheck, chatController.createChat)
 router.delete('/delete', authMiddleware.authCheck, chatController.deleteChat)
-router.get('/all/:id',authMiddleware.authCheck, chatController.listChat)
-router.get('/detail/:receiver',authMiddleware.authCheck, chatController.detailChat)
-
+router.get('/', authMiddleware.authCheck, chatController.listChat)
+router.get('/detail/:id', authMiddleware.authCheck, chatController.detailChat)
 
 // const chatDB ={
 //   'arka': [
