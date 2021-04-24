@@ -2,8 +2,8 @@ const userModel = require('../models/user')
 const response = require('../helpers/response')
 const bcrypt = require('bcrypt')
 const fs = require('fs')
-const qs = require('querystring')
 const { APP_URL } = process.env
+const qs = require('querystring')
 
 exports.getDetailUser = async (req, res) => {
   try {
@@ -64,14 +64,15 @@ exports.getAllUser = async (req, res) => {
 
 exports.UpdateUser = async (req, res) => {
   try {
-    const { id } = req.params
+    const id = req.userData.id
     const {
       name,
+      password,
       phone,
+      email,
       status,
       userID,
       picture,
-      password,
       ...data
     } = req.body
     const salt = await bcrypt.genSalt()
@@ -91,6 +92,19 @@ exports.UpdateUser = async (req, res) => {
           return response(res, 200, true, 'Name has been updated', { id, name })
         }
         return response(res, 400, false, 'Cant update name')
+      }
+    }
+
+    // email
+    if (email) {
+      if (email === initialResults[0].email) {
+        return response(res, 200, true, 'Please insert different email', { email: email })
+      } else {
+        const updateemail = await userModel.updateUser(id, { email: email })
+        if (updateemail.affectedRows > 0) {
+          return response(res, 200, true, 'Email has been updated', { id, email })
+        }
+        return response(res, 400, false, 'Cant update email')
       }
     }
 
@@ -134,27 +148,31 @@ exports.UpdateUser = async (req, res) => {
     }
 
     // Password
-    if (password !== '' && password !== undefined) {
+    if (password) {
       const compare = bcrypt.compareSync(password, initialResults[0].password)
-      console.log(compare)
       if (!compare) {
         const encryptedNewPassword = await bcrypt.hash(password, salt)
-        console.log(encryptedNewPassword)
-        await userModel.updateUser(id, { password: encryptedNewPassword })
+        const passwordResult = await userModel.updateUser(id, { password: encryptedNewPassword })
+        if (passwordResult.affectedRows > 0) {
+          return response(res, 200, true, 'Password have been updated', { id: initialResults[0].id })
+        }
+        return response(res, 400, false, 'Password cant update')
       }
+      return response(res, 401, false, 'Wrong current password')
     }
 
     // image
     if (req.file) {
       const picture = req.file.filename
-      // if (picture !== '') {
-      const updatePicture = await userModel.updateUser(id, { picture })
-      if (updatePicture.affectedRows > 0) {
+      const uploadImage = await userModel.updateUser(id, { picture })
+      if (uploadImage.affectedRows > 0) {
         if (initialResults[0].picture !== null) {
+          console.log(initialResults[0].picture)
           fs.unlinkSync(`upload/profile/${initialResults[0].picture}`)
         }
+        return response(res, 200, true, 'Image has been Updated', { id, picture })
       }
-      // }
+      return response(res, 400, false, 'Cant update image')
     }
 
     // info
