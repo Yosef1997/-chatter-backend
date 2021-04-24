@@ -6,5 +6,6 @@ const validator = require('../middleware/validator')
 
 routes.get('/:id', authMiddleware.authCheck, validator.valdationResult, userController.getDetailUser)
 routes.patch('/', authMiddleware.authCheck, uploadImage, validator.valdationResult, userController.UpdateUser)
+routes.delete('/', authMiddleware.authCheck, validator.valdationResult, userController.deletePicture)
 routes.get('/', authMiddleware.authCheck, validator.valdationResult, userController.getAllUser)
 module.exports = routes

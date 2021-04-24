@@ -34,9 +34,9 @@ exports.updateUser = (id, data) => {
 exports.deletePicture = (id) => {
   return new Promise((resolve, reject) => {
     const query = db.query(`
-      UPDATE user
-      SET picture=NULL
-      WHERE id=${id}
+      UPDATE users
+      SET picture = NULL
+      WHERE id = ${id}
     `, (err, res, field) => {
       if (err) reject(err)
       resolve(res)
