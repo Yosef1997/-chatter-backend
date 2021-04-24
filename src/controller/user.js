@@ -2,6 +2,8 @@ const userModel = require('../models/user')
 const response = require('../helpers/response')
 const bcrypt = require('bcrypt')
 const fs = require('fs')
+const qs = require('querystring')
+const { APP_URL } = process.env
 
 exports.getDetailUser = async (req, res) => {
   try {
@@ -69,6 +71,7 @@ exports.UpdateUser = async (req, res) => {
       status,
       userID,
       picture,
+      password,
       ...data
     } = req.body
     const salt = await bcrypt.genSalt()
@@ -130,32 +133,28 @@ exports.UpdateUser = async (req, res) => {
       }
     }
 
-    // // Password
-    // if (password) {
-    //   const compare = bcrypt.compareSync(password, initialResults[0].password)
-    //   if (compare) {
-    //     const encryptedNewPassword = await bcrypt.hash(newPassword, salt)
-    //     const passwordResult = await userModel.updateUser(id, { password: encryptedNewPassword })
-    //     if (passwordResult.affectedRows > 0) {
-    //       return response(res, 200, true, 'Password have been updated', { id: initialResults[0].id })
-    //     }
-    //     return response(res, 400, false, 'Password cant update')
-    //   }
-    //   return response(res, 401, false, 'Wrong current password')
-    // }
+    // Password
+    if (password !== '' && password !== undefined) {
+      const compare = bcrypt.compareSync(password, initialResults[0].password)
+      console.log(compare)
+      if (!compare) {
+        const encryptedNewPassword = await bcrypt.hash(password, salt)
+        console.log(encryptedNewPassword)
+        await userModel.updateUser(id, { password: encryptedNewPassword })
+      }
+    }
 
     // image
     if (req.file) {
-      // const updatePicture = await userModel.updateUser(id, {picture: req.file.path})
       const picture = req.file.filename
-      const uploadImage = await userModel.updateUser(id, { picture })
-      if (uploadImage.affectedRows > 0) {
+      // if (picture !== '') {
+      const updatePicture = await userModel.updateUser(id, { picture })
+      if (updatePicture.affectedRows > 0) {
         if (initialResults[0].picture !== null) {
           fs.unlinkSync(`upload/profile/${initialResults[0].picture}`)
         }
-        return response(res, 200, true, 'Image has been Updated', { id, picture })
       }
-      return response(res, 400, false, 'Cant update image')
+      // }
     }
 
     // info

@@ -3,14 +3,16 @@ const response = require('../helpers/response')
 
 exports.createChat = async (req, res) => {
   try {
-    const data = { ...req.query }
-    data.sender = req.userData.id,
-    data.receiver = data.receiver,
-    data.message = data.message
+    const data = req.body
+    const chatData = {
+      sender: req.userData.id,
+      receiver: data.receiver,
+      message: data.message
+    }
 
-    const chat = await chatModel.createChat(data)
-    if (chat.affectedRows > 0) {
-      return response(res, 200, true, 'Chat send', chat[0])
+    const creatChat = await chatModel.createChat(chatData)
+    if (creatChat.affectedRows > 0) {
+      return response(res, 200, true, 'Chat send', creatChat[0])
     } else {
       return response(res, 400, false, 'Chat not send')
     }
@@ -56,7 +58,6 @@ exports.deleteChat = async (req, res) => {
   try {
     const receiver = Number(req.body)
     const message = String(req.query)
-    // const receiver = Number(req.params.id)
     const sender = req.userData.id
     const deleteChat = await chatModel.deleteChat(receiver, message, sender)
     console.log(deleteChat)

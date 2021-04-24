@@ -60,7 +60,7 @@ exports.getUsersByCondition = (cond) => {
 exports.getAllUserByCondition = (id, cond) => {
   return new Promise((resolve, reject) => {
     const query = db.query(`
-    SELECT id, name, status, picture 
+    SELECT * 
     FROM users
     WHERE name LIKE "%${cond.search}%" AND id NOT IN (${id})
     ORDER BY ${cond.sort} ${cond.order}

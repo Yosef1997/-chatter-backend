@@ -43,13 +43,13 @@ exports.getAllChat = (id) => {
 }
 
 exports.detailChat = (receiver, sender) => {
-  return new Promise ((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const query = db.query(`
     SELECT * from message WHERE receiver=${receiver} AND sender=${sender}
     `, (err, res, field) => {
       if (err) reject(err)
       resolve(res)
-    }) 
+    })
     console.log(query.sql)
   })
 }
