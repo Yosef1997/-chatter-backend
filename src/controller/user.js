@@ -18,8 +18,8 @@ exports.getDetailUser = async (req, res) => {
 }
 
 exports.getAllUser = async (req, res) => {
-  try{
-    const {id} = req.userData
+  try {
+    const { id } = req.userData
     const cond = req.query
     cond.search = cond.search || ''
     cond.page = Number(cond.page) || 1
@@ -30,7 +30,7 @@ exports.getAllUser = async (req, res) => {
 
     let totalPage
     let totalData
-    
+
     if (cond.search) {
       totalData = await userModel.getCountUserByCondition(id, cond)
       totalPage = Math.ceil(Number(totalData[0].totalData) / cond.limit)
@@ -54,7 +54,7 @@ exports.getAllUser = async (req, res) => {
         prevLink: cond.page > 1 ? `${APP_URL}contact?${qs.stringify({ ...req.query, ...{ page: cond.page - 1 } })}` : null
       }
     )
-  }catch(error){
+  } catch (error) {
     console.log(error)
     return response(res, 400, false, 'Bad Request')
   }
@@ -104,7 +104,6 @@ exports.UpdateUser = async (req, res) => {
       }
     }
 
-
     // Status
     if (status) {
       if (status === initialResults[0].status) {
@@ -144,7 +143,6 @@ exports.UpdateUser = async (req, res) => {
     //   }
     //   return response(res, 401, false, 'Wrong current password')
     // }
-
 
     // image
     if (req.file) {
