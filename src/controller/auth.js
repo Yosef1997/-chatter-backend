@@ -6,16 +6,25 @@ const { APP_KEY } = process.env
 
 exports.signUp = async (req, res) => {
   try {
-    const { name, password, phone } = req.body
+    const { name, password, phone, picture } = req.body
     const isExist = await userModel.getUsersByCondition({ phone })
     if (isExist.length < 1) {
       const salt = await bcrypt.genSalt()
       const encryptedPassword = await bcrypt.hash(password, salt)
-      const createUser = await userModel.createUser({ name, password: encryptedPassword, phone })
-      if (createUser.insertId > 0) {
-        return response(res, 200, true, 'Register Success')
+      if (picture === undefined) {
+        const createUser = await userModel.createUser({ name, password: encryptedPassword, phone, picture: null })
+        if (createUser.insertId > 0) {
+          return response(res, 200, true, 'Register Success')
+        } else {
+          return response(res, 400, false, 'Register Failed')
+        }
       } else {
-        return response(res, 400, false, 'Register Failed')
+        const createUser = await userModel.createUser({ name, password: encryptedPassword, phone, picture })
+        if (createUser.insertId > 0) {
+          return response(res, 200, true, 'Register Success')
+        } else {
+          return response(res, 400, false, 'Register Failed')
+        }
       }
     } else {
       return response(res, 400, false, 'Phone number already used')
@@ -38,7 +47,7 @@ exports.login = async (req, res) => {
       }
       return response(res, 200, true, 'Login success', results)
     } else {
-      return response(res, 401, false, 'Email not registered')
+      return response(res, 401, false, 'Phone number not registered')
     }
   } catch (error) {
     return response(res, 400, false, 'Bad Request')
