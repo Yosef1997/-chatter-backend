@@ -122,7 +122,7 @@ exports.UpdateUser = async (req, res) => {
     }
 
     // Status
-    if (status) {
+    if (status !== undefined) {
       if (status === initialResults[0].status) {
         return response(res, 200, true, 'Please insert different status', { phone: phone })
       } else {
@@ -135,7 +135,7 @@ exports.UpdateUser = async (req, res) => {
     }
 
     // userID
-    if (userID) {
+    if (userID !== undefined) {
       if (userID === initialResults[0].userID) {
         return response(res, 200, true, 'Please insert different userID', { phone: phone })
       } else {
@@ -156,9 +156,9 @@ exports.UpdateUser = async (req, res) => {
         if (passwordResult.affectedRows > 0) {
           return response(res, 200, true, 'Password have been updated', { id: initialResults[0].id })
         }
-        return response(res, 400, false, 'Password cant update')
+        return response(res, 400, false, "Password can't update")
       }
-      return response(res, 401, false, 'Wrong current password')
+      return response(res, 401, false, 'Same password')
     }
 
     // image
