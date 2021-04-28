@@ -83,7 +83,7 @@ exports.UpdateUser = async (req, res) => {
     }
 
     // name
-    if (name) {
+    if (name !== undefined) {
       if (name === initialResults[0].name) {
         return response(res, 200, true, 'Please insert different name', { name: name })
       } else {
@@ -109,7 +109,7 @@ exports.UpdateUser = async (req, res) => {
     }
 
     // phone
-    if (phone) {
+    if (phone !== undefined) {
       if (phone === initialResults[0].phone) {
         return response(res, 200, true, 'Please insert different phone number', { phone: phone })
       } else {
