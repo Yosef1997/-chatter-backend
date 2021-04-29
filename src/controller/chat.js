@@ -26,9 +26,10 @@ exports.listChat = async (req, res) => {
     const id = req.userData.id
     const initialResults = await chatModel.getAllChat(id)
     if (initialResults.length > 0) {
-      const results = initialResults.map(object => object.name)
-      const finalResults = Array.from(new Set(results))
-      return response(res, 200, true, 'All chat', finalResults)
+      const key = 'name'
+      const arrayUniqueByKey = [...new Map(initialResults.map(item =>
+        [item[key], item])).values()]
+      return response(res, 200, true, 'All chat', arrayUniqueByKey)
     } else {
       return response(res, 400, false, 'Data chat not found')
     }
